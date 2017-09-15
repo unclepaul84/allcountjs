@@ -1,5 +1,5 @@
 {
-  "name": "allcountjs",
+  "name": "@unclepaul/allcountjs",
   "description": "The open source framework for rapid business application development with Node.js",
   "keywords": [
     "rapid",
@@ -9,7 +9,7 @@
     "data-centric",
     "RAD"
   ],
-  "version": "1.24.1",
+  "version": "1.24.2",
   "scripts": {
     "start": "node app.js",
     "postinstall": "./node_modules/.bin/bower-installer",

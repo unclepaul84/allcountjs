@@ -1,10 +1,7 @@
-[![Build Status](https://travis-ci.org/allcount/allcountjs.svg?branch=master)](https://travis-ci.org/allcount/allcountjs)
-[![Build Status](https://ci.appveyor.com/api/projects/status/github/allcount/allcountjs?svg=true)](https://ci.appveyor.com/project/paveltiunov/allcountjs)
-[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/allcount/allcountjs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+
 
 <img src="https://allcountjs.com/assets/images/allcountjs-logo-card.png" width="381">
 
-# WARNING: This project is not maintained anymore
 
 # What is AllcountJS
 
