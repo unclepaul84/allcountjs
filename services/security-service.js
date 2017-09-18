@@ -14,6 +14,9 @@ module.exports = function (storageDriver, securityConfigService, entityDescripti
         return entityDescriptionService.tableDescription(entityDescriptionService.entityTypeIdCrudId(UserEntityTypeId));
     }
 
+
+    service.findUser = findUser;
+
     function findUser(username) {
         return storageDriver.findAll(userTableDescription(), {query: {username: username}}).then(function (user) {
             user = user[0];
