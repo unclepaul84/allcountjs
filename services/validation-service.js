@@ -7,7 +7,10 @@ module.exports = function (entityDescriptionService, appUtil) {
             var fieldNameToMessage = _.chain(entityDescription.allFields).map(function (field, fieldName) {
                 var message = !definedFieldsOnly || definedFieldsOnly && !_.isUndefined(entity[fieldName]) ? service.validateField(field, entity[fieldName]) : undefined;
                 if (message) {
-                    return [fieldName, message];
+                    if (field.validationMessage)
+                        return [fieldName, field.validationMessage];
+                    else
+                        return [fieldName, message];
                 }
                 return undefined;
             }).filter(_.identity).object().value();
@@ -18,6 +21,18 @@ module.exports = function (entityDescriptionService, appUtil) {
         validateField: function (field, fieldValue) {
             if (field.isRequired && (_.isUndefined(fieldValue) || _.isNull(fieldValue))) {
                 return "Required";
+            }
+            else if (field.regex) {
+                try {
+                    const r = new RegExp(field.regex);
+
+                    if (!r.test(fieldValue.toString()))
+                        return "Must match following expression: " + field.regex;
+                    else
+                        return undefined;
+                } catch (e) {
+                    return e;
+                }
             }
             return undefined;
         }

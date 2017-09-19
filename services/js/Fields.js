@@ -206,6 +206,14 @@ Field.prototype.unique = function (isUnique) {
     this.isUnique = _.isUndefined(isUnique) ? true : isUnique;
     return this;
 };
+Field.prototype.regex = function (regex) {
+    this.regex = regex;
+    return this;
+};
+Field.prototype.validationMessage = function (msg) {
+    this.validationMessage = msg;
+    return this;
+};
 
 Field.prototype.masked = function (mask) {
     this.fieldType.mask = mask;
