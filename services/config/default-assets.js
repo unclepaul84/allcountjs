@@ -18,7 +18,8 @@ module.exports = function () {
             "/assets/lib/js/allcountjs-angular-base/allcount-base.js",
             "/assets/js/allcount.js",
             "/assets/lib/js/moment/moment-with-locales.js",
-            "/assets/lib/js/eonasdan-bootstrap-datetimepicker/bootstrap-datetimepicker.js"
+            "/assets/lib/js/eonasdan-bootstrap-datetimepicker/bootstrap-datetimepicker.js",
+            "/assets/js/jsoneditor.min.js"
         ],
         '/assets/js/allcount-head-scripts.js': [
             '/assets/lib/js/jquery/jquery.js',

@@ -125,6 +125,18 @@ module.exports = function (storageDriver) {
                         return '';
                     }
                 }
+                ,
+                json: {
+                    schema: function () {
+                        return {};
+                    },
+                    toBsonValue: function (value, field, entity, fieldName) {
+                        return value;
+                    },
+                    fromBsonValue: function (value, field, entity, fieldName) {
+                        return value;
+                    }
+                }
 
             }
         }

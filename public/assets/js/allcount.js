@@ -1,3 +1,6 @@
+
+
+
 var allcountModule = angular.module("allcount", ['ngAnimate', 'blueimp.fileupload', 'ui.bootstrap', 'allcount-base']);
 
 window.allcountModule = allcountModule;
@@ -7,9 +10,9 @@ allcountModule.factory('track', function () {
 });
 
 allcountModule.config(["$httpProvider", function ($httpProvider) {
-    $httpProvider.interceptors.push(['$q', 'track', function($q, track) {
+    $httpProvider.interceptors.push(['$q', 'track', function ($q, track) {
         return {
-            responseError: function(rejection) {
+            responseError: function (rejection) {
                 if (rejection.status !== 403) {
                     track("allcount-rest-error", {
                         url: rejection.config.url,
@@ -26,7 +29,7 @@ allcountModule.config(["$httpProvider", function ($httpProvider) {
 }]);
 
 allcountModule.config(["$locationProvider", function ($locationProvider) {
-    $locationProvider.html5Mode({enabled: true, requireBase: true});
+    $locationProvider.html5Mode({ enabled: true, requireBase: true });
 }]);
 
 /**
@@ -37,7 +40,7 @@ allcountModule.factory("rest", ["lcApi", function (lcApi) {
 }]);
 
 allcountModule.config(["fieldRenderingServiceProvider", function (fieldRenderingServiceProvider) {
-    fieldRenderingServiceProvider.defineFields(["$filter", "$compile", "$locale", "lcApi", "messages", function ($filter, $compile, $locale, rest, messages) {
+    fieldRenderingServiceProvider.defineFields(["$timeout", "$filter", "$compile", "$locale", "lcApi", "messages", function ($timeout, $filter, $compile, $locale, rest, messages) {
 
         var dateRegex = /^(\d{4})-(\d\d)-(\d\d)$/;
 
@@ -120,7 +123,7 @@ allcountModule.config(["fieldRenderingServiceProvider", function (fieldRendering
         };
 
         var toMomentDateFormat = function (angularDateFormat) {
-            return angularDateFormat.replace("yyyy", "YYYY").replace("yy", "YY").replace("y", "YYYY").replace("dd","DD").replace("d", "D")
+            return angularDateFormat.replace("yyyy", "YYYY").replace("yy", "YY").replace("y", "YYYY").replace("dd", "DD").replace("d", "D")
                 .replace('EEEE', 'dddd').replace('EEE', 'ddd')
                 .replace('ww', 'WW').replace('w', 'W')
                 .replace('sss', 'SSS');
@@ -146,10 +149,10 @@ allcountModule.config(["fieldRenderingServiceProvider", function (fieldRendering
                     controller.$setViewValue(radioValue);
                 });
                 var radioInputs = fieldDescription.fieldType.valuesArray.map(function (value) {
-                   return '<input type="radio" ng-model="radioValue" value="{0}">{0}<br/>'.replace(/\{0\}/g, value); 
+                    return '<input type="radio" ng-model="radioValue" value="{0}">{0}<br/>'.replace(/\{0\}/g, value);
                 }).join("\n");
                 return $compile(radioInputs)(scope);
-            }],            
+            }],
             date: [function (value, fieldDescription) {
                 return $filter('date')(parseDate(value), dateFormat(fieldDescription));
             }, function (fieldDescription, controller, updateValue, clone, scope) { //TODO
@@ -158,7 +161,7 @@ allcountModule.config(["fieldRenderingServiceProvider", function (fieldRendering
                     locale: $locale.id.split("-")[0],
                     format: toMomentDateFormat(dateFormat(fieldDescription))
                 });
-                if(typeof controller.$viewValue != 'undefined') {
+                if (typeof controller.$viewValue != 'undefined') {
                     input.data("DateTimePicker").date(parseDate(controller.$viewValue) || null);
                     input.data("DateTimePicker").defaultDate(parseDateToMoment(controller.$viewValue) || null);
                 }
@@ -177,7 +180,7 @@ allcountModule.config(["fieldRenderingServiceProvider", function (fieldRendering
                 scope.pattern = /\d+/;
                 scope.$watch('integerValue', function (integerValue) {
                     var x = integerValue && parseInt(integerValue, 10)
-                    controller.$setViewValue(isNaN(x) ?  undefined : x);
+                    controller.$setViewValue(isNaN(x) ? undefined : x);
                 });
                 return $compile('<input ng-model="integerValue" class="form-control" ng-pattern="pattern">')(scope);
             }],
@@ -188,7 +191,7 @@ allcountModule.config(["fieldRenderingServiceProvider", function (fieldRendering
                 scope.pattern = /[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?/;
                 scope.$watch('numberValue', function (numberValue) {
                     var x = numberValue && parseFloat(numberValue)
-                    controller.$setViewValue(isNaN(x) ?  undefined : x);
+                    controller.$setViewValue(isNaN(x) ? undefined : x);
                 });
                 return $compile('<input ng-model="numberValue" class="form-control" ng-pattern="pattern">')(scope);
             }],
@@ -235,7 +238,7 @@ allcountModule.config(["fieldRenderingServiceProvider", function (fieldRendering
                     scope.$watch('selectedReference.value', function (referenceValue) {
                         controller.$setViewValue(referenceValue);
                     });
-                    scope.selectedReference = {value: controller.$viewValue};
+                    scope.selectedReference = { value: controller.$viewValue };
 
                     return $compile('<div ng-model="selectedReference.value" lc-reference="referenceEntityTypeId"></div>')(scope);
 
@@ -258,7 +261,7 @@ allcountModule.config(["fieldRenderingServiceProvider", function (fieldRendering
                 scope.$watch('selectedReference.value', function (referenceValue) {
                     controller.$setViewValue(referenceValue);
                 });
-                scope.selectedReference = {value: controller.$viewValue};
+                scope.selectedReference = { value: controller.$viewValue };
 
                 return $compile('<div ng-model="selectedReference.value" lc-reference="referenceEntityTypeId" is-multiple="true"></div>')(scope);
             }],
@@ -296,9 +299,9 @@ allcountModule.config(["fieldRenderingServiceProvider", function (fieldRendering
                     elem = $('<img>');
                     elem.attr('src', value.secure_url.replace(/\/v\d+/, '/w_100,h_100,c_fill'));
                     link.append(elem);
-                    link.click (function (e) {
+                    link.click(function (e) {
                         e.preventDefault();
-                        blueimp.Gallery(link, {event: e});
+                        blueimp.Gallery(link, { event: e });
                     });
                     if (!$('#blueimp-gallery').length) {
                         $('body').append('<div id="blueimp-gallery" class="blueimp-gallery"><div class="slides"></div><h3 class="title"></h3><a class="close">×</a></div>');
@@ -340,55 +343,142 @@ allcountModule.config(["fieldRenderingServiceProvider", function (fieldRendering
                     controller.$setViewValue(emailValue ? emailValue : undefined);
                 });
                 return $compile('<input type="email" ng-model="emailValue" class="form-control">')(scope);
+            }],
+
+            json: [function (value, fieldDescription) {
+
+
+                JSONEditor.defaults.theme = 'bootstrap3';
+
+                JSONEditor.defaults.iconlib = 'fontawesome4';
+
+                var editorDiv = $('<div></div>');
+
+                const editorjq = editorDiv.jsoneditor({
+                    schema: fieldDescription.schema,
+                    ajax: true,
+                    disable_edit_json: true,
+                    disable_properties: true,
+                    disable_array_add: true,
+                    disable_array_delete: true,
+                    disable_array_reorder: true
+
+                }).on('ready', () => {
+
+                    var editor = editorjq.data('jsoneditor');
+
+                    editor.setValue(value);
+
+                    editor.disable();
+
+                    editorDiv.find(".form-group").css("margin-right", "0").css("margin-left", "0");
+
+                });
+
+                return editorDiv;
+
+
+            }, function (fieldDescription, controller, updateValue, clone, scope) {
+
+
+                JSONEditor.defaults.theme = 'bootstrap3';
+
+                JSONEditor.defaults.iconlib = 'fontawesome4';
+
+                var editorDiv = $('<div style="padding:2px"></div>');
+
+                const editorjq = editorDiv.jsoneditor({
+                    schema: fieldDescription.schema,
+                    ajax: true,
+                }).on('ready', () => {
+
+                    var editor = editorjq.data('jsoneditor');
+
+                    if (controller.$viewValue)
+                        editor.setValue(controller.$viewValue);
+
+                    editorDiv.find(".form-group").css("margin-right", "0").css("margin-left", "0");
+
+                }).on('change', () => {
+
+                    var editor = editorjq.data('jsoneditor');
+
+                    var errors = editor.validate();
+
+                    if (errors.length) {
+
+                        console.log(errors);
+
+                        editorDiv.css({ border: '2px dashed red' });
+                    }
+                    else {
+
+                        editorDiv.css({ border: '' });
+
+                        var newVal = editor.getValue();
+
+                        controller.$setViewValue(newVal);
+                    }
+
+
+                });
+
+
+                return editorDiv;
             }]
         }
     }]);
 
-    fieldRenderingServiceProvider.defineLayoutRenderers(function () { return {
-        H: function (params, children) {
-            var container = $('<div class="row"/>');
-            var fraction = Math.floor(12.0 / children.length);
-            $(children).each(function (index, item) {
-                var elem = $('<div class="col-md-' + fraction +  '"/>');
-                elem.append(item());
-                container.append(elem);
-            });
-            return container;
-        },
-        V: function (params, children) {
-            var container = $('<div class="row"/>');
-            $(children).each(function (index, item) {
-                var elem = $('<div class="col-md-12"/>');
-                elem.append(item());
-                container.append(elem);
-            });
-            return container;
-        },
-        Tabs: function (params, children, childrenObjs) {
-            var container = $('<div/>');
-            var tabContainer = $('<ul class="nav nav-tabs"/>');
-            $(childrenObjs).each(function (index, item) {
-                var elem = $('<li class="' + (index == 0 ? 'active' : '') +'"><a href="#">' + item.params.title + '</a></li>'); //TODO javascript injection? //TODO id generation
-                elem.click(function () {
-                    $('.tab-pane', container).removeClass('active');
-                    $('li', container).removeClass('active');
-                    elem.addClass('active');
-                    $('#tab-' + index, container).addClass('active');
-                });
-                tabContainer.append(elem);
-            });
-            container.append(tabContainer);
 
-            var paneContainer = $('<div class="tab-content"/>');
-            $(children).each(function (index, item) {
-                var elem = $('<div class="tab-pane ' + (index == 0 ? 'active' : '') +'" id="tab-' + index +  '"></div>'); //TODO javascript injection? //TODO id generation
-                elem.append(item());
-                paneContainer.append(elem);
-            });
-            container.append(paneContainer);
-            return container;
+
+
+    fieldRenderingServiceProvider.defineLayoutRenderers(function () {
+        return {
+            H: function (params, children) {
+                var container = $('<div class="row"/>');
+                var fraction = Math.floor(12.0 / children.length);
+                $(children).each(function (index, item) {
+                    var elem = $('<div class="col-md-' + fraction + '"/>');
+                    elem.append(item());
+                    container.append(elem);
+                });
+                return container;
+            },
+            V: function (params, children) {
+                var container = $('<div class="row"/>');
+                $(children).each(function (index, item) {
+                    var elem = $('<div class="col-md-12"/>');
+                    elem.append(item());
+                    container.append(elem);
+                });
+                return container;
+            },
+            Tabs: function (params, children, childrenObjs) {
+                var container = $('<div/>');
+                var tabContainer = $('<ul class="nav nav-tabs"/>');
+                $(childrenObjs).each(function (index, item) {
+                    var elem = $('<li class="' + (index == 0 ? 'active' : '') + '"><a href="#">' + item.params.title + '</a></li>'); //TODO javascript injection? //TODO id generation
+                    elem.click(function () {
+                        $('.tab-pane', container).removeClass('active');
+                        $('li', container).removeClass('active');
+                        elem.addClass('active');
+                        $('#tab-' + index, container).addClass('active');
+                    });
+                    tabContainer.append(elem);
+                });
+                container.append(tabContainer);
+
+                var paneContainer = $('<div class="tab-content"/>');
+                $(children).each(function (index, item) {
+                    var elem = $('<div class="tab-pane ' + (index == 0 ? 'active' : '') + '" id="tab-' + index + '"></div>'); //TODO javascript injection? //TODO id generation
+                    elem.append(item());
+                    paneContainer.append(elem);
+                });
+                container.append(paneContainer);
+                return container;
+            }
         }
-    }});
+    });
 
     fieldRenderingServiceProvider.setFormStaticTemplate(["$compile", function ($compile) {
         return function (value, fieldScope) {
@@ -567,7 +657,7 @@ function pagingDirective(directiveName) {
                     if (attrs.paging) pagingAssign = $parse(attrs.paging).assign;
 
                     scope.refreshCount = function (onSuccess) {
-                        rest.findCount({entityTypeId: entityTypeId}, scope.filtering, function (countAndTotalRow) {
+                        rest.findCount({ entityTypeId: entityTypeId }, scope.filtering, function (countAndTotalRow) {
                             scope.count = countAndTotalRow.count;
                             var setTotalRow = attrs.totalRow && $parse(attrs.totalRow).assign;
                             if (setTotalRow) {
@@ -605,7 +695,7 @@ function pagingDirective(directiveName) {
                             i < Math.min(paging.start + scope.numPages * scope.pageSize, scope.count);
                             i += scope.pageSize
                         ) {
-                            scope.pages.push({start: i, count: Math.min(scope.count - i, scope.pageSize)});
+                            scope.pages.push({ start: i, count: Math.min(scope.count - i, scope.pageSize) });
                         }
                     };
 
@@ -724,7 +814,7 @@ allcountModule.directive("lcActions", ["rest", "messages", "$parse", "$modal", f
                                             scope: modalScope
                                         })
                                     } else {
-                                        throw new Error('Unknown actionResult type "' + actionResult.type +  '" for ' + JSON.stringify(actionResult));
+                                        throw new Error('Unknown actionResult type "' + actionResult.type + '" for ' + JSON.stringify(actionResult));
                                     }
                                 }, function () {
                                     action.isPerforming = false;
@@ -786,7 +876,7 @@ allcountModule.directive("lcReference", ["rest", "messages", function (rest, mes
                             // parse the results into the format expected by Select2.
                             // since we are using custom formatting functions we do not need to
                             // alter the remote JSON data
-                            return {results: data };
+                            return { results: data };
                         },
                         cache: true
                     },
@@ -820,7 +910,7 @@ allcountModule.directive("lcReference", ["rest", "messages", function (rest, mes
 
                 function phaseWrapper(func) {
                     return function () {
-                        if(!scope.$$phase) {
+                        if (!scope.$$phase) {
                             scope.$apply(func);
                         } else {
                             func();
@@ -875,7 +965,7 @@ allcountModule.directive("lcModal", ["$parse", function ($parse) {
         link: function (scope, element, attrs, ctrl, transclude) {
             transclude(scope, function (elem) {
                 var $element = $(elem);
-                var modal = $element.modal({show: false});
+                var modal = $element.modal({ show: false });
                 scope.show = false;
 
                 var assignIsShowing = $parse(attrs.lcModal).assign;
@@ -895,7 +985,7 @@ allcountModule.directive("lcModal", ["$parse", function ($parse) {
                     var assign = function () {
                         assignIsShowing(scope.$parent, isShowing);
                     };
-                    if(!scope.$$phase) {
+                    if (!scope.$$phase) {
                         scope.$apply(assign);
                     } else {
                         assign();
@@ -912,7 +1002,7 @@ allcountModule.directive("lcTooltip", ["$parse", "messages", function ($parse, m
     return {
         restrict: 'A',
         link: function (scope, element, attrs) {
-            function isTouchDevice(){
+            function isTouchDevice() {
                 return true == ("ontouchstart" in window || window.DocumentTouch && document instanceof DocumentTouch);
             }
             if (!isTouchDevice()) {
@@ -930,7 +1020,7 @@ allcountModule.directive("lcTooltip", ["$parse", "messages", function ($parse, m
 
 function toEntityCrudId(id) {
     if (angular.isString(id)) {
-        return {entityTypeId: id};
+        return { entityTypeId: id };
     } else {
         return id;
     }

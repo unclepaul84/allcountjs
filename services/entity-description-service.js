@@ -173,7 +173,8 @@ module.exports = function (queryParseService, securityConfigService, appUtil, in
                 hideInGrid: field.hideInGrid || showInGrid && showInGrid.indexOf(fieldName) === -1,
                 fieldTypeId: field.fieldType.id, //TODO remove?
                 fieldType: field.fieldType,
-                isReadOnly: field.readOnly()
+                isReadOnly: field.readOnly(),
+                schema:field.schema || {}
             }
         }
     };

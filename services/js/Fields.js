@@ -178,6 +178,18 @@ exports.email = function (name) {
     })
 };
 
+exports.json = function (name, schema) {
+    return new Field({
+        name: name,
+        hideInGrid: true,
+        schema:schema,   
+        fieldType: {
+            id: 'json',
+            removeFormLabel: true
+        }
+    })
+};
+
 function Field(config) {
     _.extend(this, config);
 }
