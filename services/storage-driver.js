@@ -88,14 +88,14 @@ module.exports = function (dbUrl, injection, appUtil) {
     };
 
     function sortingFor(filteringAndSorting, fields) {
-        return _.object(_.union(filteringAndSorting && filteringAndSorting.sorting && filteringAndSorting.sorting.filter(function (i) { return !!fields[i[0]]}) || [], [['modifyTime', -1]]));
+        return _.object(_.union(filteringAndSorting && filteringAndSorting.sorting && filteringAndSorting.sorting.filter(function (i) { return !!fields[i[0]] }) || [], [['modifyTime', -1]]));
     }
 
     function ensureIndexes(table, filteringAndSorting) {
         var indexFieldHash = {};
         var indexes = [];
 
-        indexes = _.map(sortingFor(filteringAndSorting, table.fields), function (order, fieldName) { return [fieldName, order]});
+        indexes = _.map(sortingFor(filteringAndSorting, table.fields), function (order, fieldName) { return [fieldName, order] });
         _.forEach(indexes, function (i) { indexFieldHash[i[0]] = true });
 
         return ensureIndexesWith(indexes, indexFieldHash, table, filteringAndSorting);
@@ -109,7 +109,7 @@ module.exports = function (dbUrl, injection, appUtil) {
         var query = queryFor(table, filteringAndSorting);
         function addIndexField(q, fieldName) {
             if (fieldName === '$and' || fieldName === '$or') {
-                _.forEach(q, function (qObj) {_.forEach(qObj, addIndexField) });
+                _.forEach(q, function (qObj) { _.forEach(qObj, addIndexField) });
             } else if (!indexFieldHash[fieldName]) {
                 indexes.unshift([fieldName, 1]);
                 indexFieldHash[fieldName] = true;
@@ -119,7 +119,7 @@ module.exports = function (dbUrl, injection, appUtil) {
 
         if (indexes.length > 0) {
             var collection = db.collection(table.tableName);
-            return Q.nfbind(collection.ensureIndex.bind(collection))(indexes, {name: crypto.createHash('sha1').update(JSON.stringify(indexes)).digest('hex')});
+            return Q.nfbind(collection.ensureIndex.bind(collection))(indexes, { name: crypto.createHash('sha1').update(JSON.stringify(indexes)).digest('hex') });
         } else {
             return Q(null);
         }
@@ -141,36 +141,36 @@ module.exports = function (dbUrl, injection, appUtil) {
     function getAllFields(table) {
         return _.extend({}, table.fields, systemFields);
     }
-    
-    function copyFilter(allFields, elements){
+
+    function copyFilter(allFields, elements) {
         var query = {};
-        _.each(elements, function(filterValue, filterName){
-            if(filterName === '$and' || filterName === '$or'){
-                if(_.isArray(filterValue)){
+        _.each(elements, function (filterValue, filterName) {
+            if (filterName === '$and' || filterName === '$or') {
+                if (_.isArray(filterValue)) {
                     var tmparray = [];
-                    _.each(filterValue, function(filters){
+                    _.each(filterValue, function (filters) {
                         var tmp = copyFilter(allFields, filters)
-                        if(!_.isEmpty(tmp)){
+                        if (!_.isEmpty(tmp)) {
                             tmparray.push(tmp);
                         }
                     });
-                    if(!_.isEmpty(tmparray)){
-                      query[filterName] = tmparray;
+                    if (!_.isEmpty(tmparray)) {
+                        query[filterName] = tmparray;
                     }
                 }
-            }else if(!_.isUndefined(allFields[filterName])){
+            } else if (!_.isUndefined(allFields[filterName])) {
                 fieldName = filterName;
                 field = allFields[filterName];
                 if (field.fieldType.id == 'reference' || field.fieldType.id == 'multiReference') {
                     var referenceId = _.isUndefined(filterValue.id) ? filterValue : filterValue.id;
                     query[filterName + '.id'] = toMongoId(referenceId)
                 } else if (field.fieldType.id == 'checkbox') {
-                    query[filterName] = filterValue ? filterValue : {$in: [false, null]};
+                    query[filterName] = filterValue ? filterValue : { $in: [false, null] };
                 } else if (field.fieldType.id == 'date') {
                     if (filterValue.op === 'gt') {
-                        query[filterName] = {$gt: filterValue.value}; //TODO convert from string?
+                        query[filterName] = { $gt: filterValue.value }; //TODO convert from string?
                     } else if (filterValue.op === 'lt') {
-                        query[filterName] = {$lt: filterValue.value}; //TODO convert from string?
+                        query[filterName] = { $lt: filterValue.value }; //TODO convert from string?
                     } else {
                         query[filterName] = filterValue;
                     }
@@ -199,7 +199,7 @@ module.exports = function (dbUrl, injection, appUtil) {
             if (filteringAndSorting.textSearch) {
                 var split = splitText(filteringAndSorting.textSearch);
                 if (split.length > 0) {
-                    query.$and = split.map(function (value) { return {__textIndex: { $regex: "^" + value + ".*" }}});
+                    query.$and = split.map(function (value) { return { __textIndex:  { $elemMatch: { $regex: "^" + value + ".*" }  }  } });
                 }
             }
             if (filteringAndSorting.filtering) {
@@ -249,13 +249,13 @@ module.exports = function (dbUrl, injection, appUtil) {
         var collection = db.collection(table.tableName);
         return Q.nfbind(collection.aggregate.bind(collection))(aggregatePipeline).then(function (rows) {
             return rows.map(function (row) {
-                return _.extend(row,  fromBson(table.fields)(row));
+                return _.extend(row, fromBson(table.fields)(row));
             });
         })
     };
 
     function padId(id) {
-        return id.length < 12 ? _.range(0, 12 - id.length).map(function () {return " "}).join("") + id : id;
+        return id.length < 12 ? _.range(0, 12 - id.length).map(function () { return " " }).join("") + id : id;
     }
 
     function toMongoId(entityId) {
@@ -279,13 +279,13 @@ module.exports = function (dbUrl, injection, appUtil) {
             return callBeforeCrudListeners(table, oldEntity, newEntity).then(function () {
                 var toUpdate = toBson(table)(_.extendOwn({}, newEntity));
                 toUpdate.modifyTime = new Date();
-                return Q(modelFor(table).findOneAndUpdate({_id: toMongoId(entity.id)}, toUpdate).exec())
+                return Q(modelFor(table).findOneAndUpdate({ _id: toMongoId(entity.id) }, toUpdate).exec())
                     .then(callAfterCrudListeners(table, oldEntity, newEntity)) //TODO REST layer should convert all data types
                     .then(function () {
                         return service.readEntity(table, entity.id).then(function (result) {
                             var update = {};
                             setAuxiliaryFields(table.fields, result, update);
-                            return Q(modelFor(table).findOneAndUpdate({_id: toMongoId(entity.id)}, update).exec());
+                            return Q(modelFor(table).findOneAndUpdate({ _id: toMongoId(entity.id) }, update).exec());
                         });
                     }).then(function (result) {
                         return fromBson(table)(result);
@@ -297,7 +297,7 @@ module.exports = function (dbUrl, injection, appUtil) {
     service.deleteEntity = function (table, entityId) {
         return service.readEntity(table, entityId).then(function (oldEntity) {
             return callBeforeCrudListeners(table, oldEntity, null).then(function () {
-                return Q(modelFor(table).findOneAndRemove({_id: toMongoId(entityId)}).exec()).then(callAfterCrudListeners(table, oldEntity, null));
+                return Q(modelFor(table).findOneAndRemove({ _id: toMongoId(entityId) }).exec()).then(callAfterCrudListeners(table, oldEntity, null));
             }).then(function (result) {
                 return fromBson(table)(result);
             });
@@ -339,11 +339,29 @@ module.exports = function (dbUrl, injection, appUtil) {
                 return value.name && value.name.toString() || undefined;
             } else if (field.fieldType.id == 'multiReference' && value) {
                 return value.map(_.property('name')).join(' ');
+
+            } else if (field.fieldType.id == 'json' && value) {
+                return getPropertyRecursive(value).join(' ');
             }
             return value && value.toString() || undefined;
         }, entity);
         toUpdate.__textIndex = _.chain(strings).map(splitText).flatten().unique().value();
     }
+
+
+
+    function getPropertyRecursive(obj) {
+        var values = [];
+        _.each(obj, function (value, key) {
+            if (_.isObject(value)) {
+                values = values.concat(getPropertyRecursive(value));
+            }
+            else values.push(value);
+
+        });
+        return values;
+    }
+
 
     function splitText(str) {
         return _.filter(str.toLowerCase().split(/\s/), function (str) {
@@ -432,7 +450,7 @@ module.exports = function (dbUrl, injection, appUtil) {
         var gridStore = new GridStore(db, toMongoId(fileId), "r");
         var open = Q.nfbind(gridStore.open.bind(gridStore));
         return open().then(function (store) {
-            return {fileName: store.filename, stream: store.stream(true)};
+            return { fileName: store.filename, stream: store.stream(true) };
         });
     };
 

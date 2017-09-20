@@ -13,16 +13,28 @@ module.exports = function (templateVarService, keygrip, securityService, securit
                 res.redirect('/login');
             }).done();
         } else {
+
+            var forceRedirectUrl = null;
+
             templateVarService.setupLocals(req, res, {
                 redirect_url: req.query.redirect_url,
                 loginMethods: loginMethods.map(function (method) {
-                    return {
+                    var loginMethod = {
                         label: method.label,
-                        url: method('https://' + req.header('Host') + '/login' ,req, res)
+                        url: method('https://' + req.header('Host') + '/login', req, res)
                     }
+
+                    if (method.forceRedirect && !req.query.legacylogin)
+                        forceRedirectUrl = loginMethod.url;
+
+                    return loginMethod;
                 })
             });
-            res.render('login');
+
+            if (forceRedirectUrl)
+                res.redirect(forceRedirectUrl)
+            else
+                res.render('login');
         }
     };
 
@@ -48,10 +60,10 @@ module.exports = function (templateVarService, keygrip, securityService, securit
                         successLoginRedirect(user, req, res);
                     });
                 } else {
-                    res.redirect('/login?redirect_url='+req.query.redirect_url);
+                    res.redirect('/login?redirect_url=' + req.query.redirect_url);
                 }
             }, function (err) {
-                res.redirect('/login?redirect_url='+req.query.redirect_url);
+                res.redirect('/login?redirect_url=' + req.query.redirect_url);
             }).done();
         };
     };
@@ -76,7 +88,7 @@ module.exports = function (templateVarService, keygrip, securityService, securit
         routes.setAccessControlHeaders(res);
         securityService.authenticateAndGenerateToken(req.body.username, req.body.password).then(function (token) {
             if (token) {
-                res.json({token: token})
+                res.json({ token: token })
             } else {
                 res.status(403).send("Not authenticated");
             }
