@@ -24,47 +24,63 @@ module.exports = function (entityDescriptionService, injection, appUtil) {
                         id: id || ('action-' + actionIdCounter++),
                         name: name,
                         perform: function (selectedItemIds) {
-                            if (actionTarget === 'all-items') {
-                                return invokePerform({
-                                    entityCrudId: entityDescriptionService.entityTypeIdCrudId(entityTypeId)
-                                });
-                            } else if (actionTarget === 'single-item') {
-                                return invokePerform({
-                                    entityCrudId: entityDescriptionService.entityTypeIdCrudId(entityTypeId),
-                                    entityId: selectedItemIds[0]
-                                });
-                            } else {
-                                throw new Error('Unknown actionTarget: ' + actionTarget);
-                            }
+                            return invokeProperty(selectedItemIds, function () {
+                                return action.propertyValue('perform');
+                            });
                         },
-                        isEnabled: function () {
-                            return Q(action.hasPropertyValue('enabled') ? action.evaluatedValue('enabled') : true).then(function (v) { return !!v });
+                        isEnabled: function (selectedItemIds) {
+                            return Q(action.hasPropertyValue('enabled') ? invokeProperty(selectedItemIds, function () {
+                               return action.propertyValue('enabled');
+                            }) : true).then(function (v) { return !!v });
+                        },
+                        isHidden: function (selectedItemIds) {                         
+                            return Q(action.hasPropertyValue('hidden') ? invokeProperty(selectedItemIds, function () {
+                                return action.propertyValue('hidden');
+                            }) : false).then(function (v) { return !!v });
                         },
                         actionTarget: actionTarget
                     };
-
-                    function invokePerform(actionContext) {
+                    function invokeProperty(selectedItemIds, fun) {
+                        var actionContext;
+                        if (actionTarget === 'all-items') {
+                            actionContext = {
+                                entityCrudId: entityDescriptionService.entityTypeIdCrudId(entityTypeId)
+                            };
+                        } else if (actionTarget === 'single-item') {
+                            actionContext = {
+                                entityCrudId: entityDescriptionService.entityTypeIdCrudId(entityTypeId),
+                                entityId: selectedItemIds[0]
+                            };
+                        } else {
+                            throw new Error('Unknown actionTarget: ' + actionTarget);
+                        }
                         return injection.inScope({
                             actionContext: actionContext
-                        }, function () {
-                            return action.propertyValue('perform');
-                        });
+                        }, fun);
                     }
                 });
             });
         },
-        actionListFor: function (entityCrudId, actionTarget) {
+        actionListFor: function (entityCrudId, actionTarget, selectedItemIds) {
             return Q.all(entityDescriptionService.entityDescription(entityCrudId).actions.filter(function (action) { //TODO permission filtering
                 return action.actionTarget === actionTarget;
             }).map(function (action) {
-                return action.isEnabled().then(function (isEnabled) {
+                return action.isEnabled(selectedItemIds).then(function (isEnabled) {
                     return {
                         id: action.id,
                         name: action.name,
-                        isEnabled: isEnabled
+                        isEnabled: isEnabled,
+                        action: action,
                     }
+                }).then(function (actionWrapper) {
+                    return actionWrapper.action.isHidden(selectedItemIds).then(function (isHidden) {
+                        actionWrapper.isHidden = isHidden;
+                        return actionWrapper;
+                    });
                 });
-            }));
+            })).then(function (actions) {
+                return actions.filter(function (action) {return !action.isHidden});
+            });
         },
         performAction: function (entityCrudId, actionId, selectedItemIds) {
             var action = _.find(entityDescriptionService.entityDescription(entityCrudId).actions, function (action) { //TODO permission filtering
@@ -73,7 +89,7 @@ module.exports = function (entityDescriptionService, injection, appUtil) {
             if (!action) {
                 throw new Error('Action with id "' + actionId + '" not found for entity crud id: ' + JSON.stringify(entityCrudId));
             }
-            if (!action.isEnabled()) {
+            if (!action.isEnabled(selectedItemIds)) {
                 throw new Error('Action with id "' + actionId + '" is not enabled');
             }
             return action.perform(selectedItemIds);
