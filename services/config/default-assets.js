@@ -15,7 +15,7 @@ module.exports = function () {
             "/assets/lib/js/angular-bootstrap/ui-bootstrap.js",
             "/assets/lib/js/angular-bootstrap/ui-bootstrap-tpls.js",
             "/assets/lib/js/blueimp-gallery/blueimp-gallery.js",
-            "/assets/lib/js/allcountjs-angular-base/allcount-base.js",
+            "/assets/js/allcount-base.js",
             "/assets/js/allcount.js",
             "/assets/lib/js/moment/moment-with-locales.js",
             "/assets/lib/js/eonasdan-bootstrap-datetimepicker/bootstrap-datetimepicker.js",

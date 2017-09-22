@@ -812,12 +812,20 @@ allcountModule.directive("lcActions", ["rest", "messages", "$parse", "$modal", f
                                         $modal.open({
                                             templateUrl: '/assets/template/modal.html',
                                             scope: modalScope
-                                        })
+                                        });
+
+                                        if (attrs.onRefresh) {
+                                            scope.$eval(attrs.onRefresh);
+                                        } else {
+                                            throw new Error('on-refresh is not defined for lc-actions');
+                                        }
+                                        
                                     } else {
                                         throw new Error('Unknown actionResult type "' + actionResult.type + '" for ' + JSON.stringify(actionResult));
                                     }
                                 }, function () {
                                     action.isPerforming = false;
+                                    refresh();
                                 });
                             };
                             action.name = messages(action.name);
