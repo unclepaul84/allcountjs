@@ -33,7 +33,7 @@ module.exports = function (
             }
 
             function checkOnlyAuthenticated(req, res, next) {
-                if (!req.user && securityService.onlyAuthenticated && req.url.indexOf('/oauth/') === -1) {
+                if (!req.user && securityService.onlyAuthenticated && req.url.indexOf('/oauth/') != 0) {
                     notAuthenticated(req, res);
                 } else {
                     next();
