@@ -45,8 +45,16 @@ function configure() {
         return require('passport')
     });
 
+
+    var hmacKey = crypto.randomBytes(30).toString('hex');
+
+    if(process.env.HMAC_KEY)
+    {
+        hmacKey = process.env.HMAC_KEY;
+    }
+    
     injection.bindFactory('keygrip', function () {
-        return Keygrip([crypto.randomBytes(30).toString('hex')]); //TODO load rotating keys from somewhere
+        return Keygrip([hmacKey]); //TODO load rotating keys from somewhere
     });
     injection.bindFactory('sessionMiddleware', function (keygrip) {
         return require('cookie-session')({keys: keygrip})
