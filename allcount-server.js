@@ -31,6 +31,8 @@ function configure() {
     injection.bindFactory('securityRoute', require('./routes/security'));
     injection.bindFactory('customViewsRoute', require('./routes/custom-views'));
     injection.bindFactory('messages', require('./routes/messages'));
+
+    injection.bindFactory('UUID', require('uuid/v1'));
     injection.bindMultiple('viewPaths', ['defaultViewPathProvider']);
     injection.bindFactory('defaultViewPathProvider', function () {
         return [path.join(__dirname, 'views')];
