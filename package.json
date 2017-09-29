@@ -9,7 +9,7 @@
     "data-centric",
     "RAD"
   ],
-  "version": "1.37.0",
+  "version": "1.38.0",
   "scripts": {
     "start": "node app.js",
     "postinstall": "./node_modules/.bin/bower-installer",
