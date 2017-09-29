@@ -40,13 +40,14 @@ module.exports = function (storageDriver, mongoFieldService) {
                             fieldType = String;
                         }
                         if (field.isUnique) {
-                            fieldType = {type: fieldType, index: { unique: true }};
+                            fieldType = {type: fieldType, unique: true, required : true};
                         }
                         return [fieldName, fieldType];
                     }).filter(_.identity).object().value();
                     definition.__textIndex = [String];
                     var schema = new Schema(definition, {
-                        collection: persistenceEntityTypeId || entityTypeId //TODO doubling?
+                        collection: persistenceEntityTypeId || entityTypeId, //TODO doubling?
+                        strict:true
                     });
                     storageDriver.mongooseModels()[entityTypeId] = storageDriver.mongooseConnection().model(entityTypeId, schema);
                 }

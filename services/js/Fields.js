@@ -216,6 +216,10 @@ Field.prototype.readOnly = function (isReadOnly) {
 
 Field.prototype.unique = function (isUnique) {
     this.isUnique = _.isUndefined(isUnique) ? true : isUnique;
+
+    if(this.isUnique)
+        this.isRequired = true;
+
     return this;
 };
 Field.prototype.regex = function (regex) {
