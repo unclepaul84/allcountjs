@@ -8,6 +8,8 @@ var GridStore = mongo.GridStore;
 var ObjectId = mongoose.Types.ObjectId;
 require('mongoose-long')(mongoose);
 
+
+
 module.exports = function (dbUrl, injection, appUtil) {
     var service = {};
     var db;
@@ -17,6 +19,9 @@ module.exports = function (dbUrl, injection, appUtil) {
 
     var onConnectedDeferred = Q.defer();
     var onConnectedPromise = onConnectedDeferred.promise;
+
+ 
+    injection.bindFactory('ObjectId', ObjectId);
 
     connection.on('connected', function () {
         db = connection.db;
