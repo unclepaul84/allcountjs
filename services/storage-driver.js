@@ -21,8 +21,11 @@ module.exports = function (dbUrl, injection, appUtil) {
     var onConnectedPromise = onConnectedDeferred.promise;
 
  
-    injection.bindFactory('ObjectId', ObjectId);
-
+  
+    injection.bindFactory('ObjectId', function() { 
+        return  x => new ObjectId(x);
+    });
+    
     connection.on('connected', function () {
         db = connection.db;
         onConnectedDeferred.resolve();
