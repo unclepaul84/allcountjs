@@ -25,7 +25,7 @@ module.exports = function (
     return {
         setup: function () {
             function notAuthenticated(req, res) {
-                if (req.url.indexOf('/api/') === 0) {
+                if (req.url.indexOf('/api/') === 0 || req.url.indexOf('/webhooks/') === 0) {
                     res.status(403).send("Not authenticated");
                 } else {
                     res.redirect('/login');

@@ -113,7 +113,16 @@ module.exports = function (templateVarService, keygrip, securityService, securit
                     res.status(403).send("Not authenticated");
                 }
             }).catch(next);
-        } else {
+        } else if (req.query.token) {
+            securityService.loginWithToken(req, req.query.token).then(function (user) {
+                if (user) {
+                    next();
+                } else {
+                    res.status(403).send("Not authenticated");
+                }
+            }).catch(next);
+        }
+        else {
             next();
         }
     };
