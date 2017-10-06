@@ -9,10 +9,9 @@
     "data-centric",
     "RAD"
   ],
-  "version": "1.44.0",
+  "version": "1.45.0",
   "scripts": {
     "start": "node app.js",
-    "postinstall": "./node_modules/.bin/bower-installer",
     "test": "./node_modules/.bin/nodeunit test"
   },
   "devDependencies": {
@@ -30,7 +29,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/allcount/allcountjs"
+    "url": "https://github.com/unclepaul84/allcountjs"
   },
   "dependencies": {
     "allcountjs-mailgun": "^1.0.0",
@@ -75,5 +74,5 @@
   },
   "license": "MIT",
   "readmeFilename": "README.md",
-  "homepage": "http://allcountjs.com"
+  "homepage": "https://github.com/unclepaul84/allcountjs"
 }

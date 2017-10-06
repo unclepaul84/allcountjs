@@ -4,7 +4,6 @@ node_modules/
 public/assets/less/*.css
 tmp/
 bower_components/
-public/assets/lib/
 build/
 logs
 *.log
