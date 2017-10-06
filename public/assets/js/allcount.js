@@ -798,7 +798,16 @@ allcountModule.directive("lcActions", ["rest", "messages", "$parse", "$modal", f
                                 rest.performAction(entityCrudId, action.id, scope.selectedItems).then(function (actionResult) {
                                     action.isPerforming = false;
                                     if (actionResult.type === 'redirect') {
-                                        window.location = actionResult.url;
+
+                                        if (actionResult.newWindow && actionResult.newWindow === true) {
+
+                                            window.open(actionResult.url,'_blank');
+                                        }
+                                        else {
+
+                                            window.location = actionResult.url;
+                                        }
+
                                     } else if (actionResult.type === 'refresh') {
                                         if (attrs.onRefresh) {
                                             scope.$eval(attrs.onRefresh);
@@ -819,7 +828,7 @@ allcountModule.directive("lcActions", ["rest", "messages", "$parse", "$modal", f
                                         } else {
                                             throw new Error('on-refresh is not defined for lc-actions');
                                         }
-                                        
+
                                     } else {
                                         throw new Error('Unknown actionResult type "' + actionResult.type + '" for ' + JSON.stringify(actionResult));
                                     }

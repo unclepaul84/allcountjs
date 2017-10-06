@@ -22,6 +22,19 @@ module.exports = function (crudService, googleExportService, actionContext) {
                 url: exportActionResult
             })
         },
+        redirect: function (url) {
+            return Q({
+                type: 'redirect',
+                url: url
+            })
+        },
+        openNewWindow: function (url) {
+            return Q({
+                type: 'redirect',
+                url: url,
+                newWindow:true
+            })
+        },
         refreshResult: function () {
             return Q({
                 type: 'refresh'
