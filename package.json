@@ -9,7 +9,7 @@
     "data-centric",
     "RAD"
   ],
-  "version": "1.46.0",
+  "version": "1.47.0",
   "scripts": {
     "start": "node app.js",
     "test": "./node_modules/.bin/nodeunit test"

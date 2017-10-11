@@ -278,6 +278,11 @@ allcountModule.config(["fieldRenderingServiceProvider", function (fieldRendering
             }],
             relation: [false, function (fieldDescription, controller, updateValue, clone, scope) {
                 scope.entityCrudId = null;
+                scope.navigateToChild = function (entityId)
+                {
+                   window.location = '/entity/' +  fieldDescription.fieldType.relationEntityTypeId  + '/' + entityId;
+                };
+
                 scope.$parent.$watch('entity', function (entity) {
                     scope.entityCrudId = entity && entity.id ? {
                         entityTypeId: scope.entityTypeId,
@@ -286,7 +291,7 @@ allcountModule.config(["fieldRenderingServiceProvider", function (fieldRendering
                     } : undefined;
                 });
 
-                return $compile('<div ng-if="entityCrudId" lc-grid="entityCrudId" paging="{}" edit-mode="isEditor"></div><div ng-if="!entityCrudId">' + messages('Relation editing available after object creation') + '</div>')(scope);
+                return $compile('<div ng-if="entityCrudId" lc-grid="entityCrudId" navigate="navigateToChild($entityId)" paging="{}" edit-mode="isEditor"></div>')(scope);
             }],
             attachment: [function (value, fieldDescription) {
                 if (!value) {
